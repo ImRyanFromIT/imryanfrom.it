@@ -23,9 +23,7 @@ languages:
   en:
     languageName: English
     weight: 1
-  bn:
-    languageName: বাংলা
-    weight: 3
+
 
 # Force a locale to be use, really useful to develop the application ! Should be commented in production, the "weight" should rocks.
 # DefaultContentLanguage: bn
@@ -97,12 +95,12 @@ params:
       enable: true
       # Share post on different social media
       shareButtons:
-        facebook: true
-        twitter: true
-        linkedin: true
-        reddit: true
-        whatsapp: true
-        email: true
+        facebook: false
+        twitter: false
+        linkedin: false
+        reddit: false
+        whatsapp: false
+        email: false
         # tumblr: true
         # pocket: true
         # diaspora: true
@@ -190,7 +188,7 @@ params:
 
     # Specify whether to show flag in the language selector. Default is true.
     flags:
-      enable: true
+      enable: false
       # # If you want to use different country flag for a language, specify them here.
       # flagOverwrites:
       #   - languageCode: en
