@@ -11,36 +11,44 @@ section:
 
 # Your accomplishments
 accomplishments:
-- name: Linux Foundation System Administrator
-  timeline: "March 2018 - March 2019"
+- name: Microsoft Certified - Windows Server Hybrid Administrator Associate
+  timeline: "July 2023 - July 2024"
   organization:
-    name: Linux Foundation
-    url: https://www.linuxfoundation.org
-  courseOverview: This course helps to understand the key concepts such as networking, storage, security, maintenance, logging and monitoring, application lifecycle, troubleshooting, API object primitives etc. It also help to grow the ability to establish basic use-cases for end users.
-  certificateURL: "https://example.com"
+    name: Microsoft
+    url: https://www.microsoft.com/en-us/
+  courseOverview: By far the most fun certification I've worked on. Verifies candidate knowledge and expertise in implementing and managing on-premises and hybrid solutions, such as identity, management, compute, networking, and storage.
+  certificateURL: "https://learn.microsoft.com/en-us/certifications/windows-server-hybrid-administrator/"
 
-- name: Machine Learning
-  timeline: "Jun 2020 - Jan 2021"
+- name: Microsoft Certified - Identity and Access Administrator Associate
+  timeline: "April 2023 - April 2024"
   organization:
-    name: Coursera
-    url: https://www.coursera.org
-  courseOverview: "This course provides a broad introduction to machine learning, datamining, and statistical pattern recognition. Topics include: (i) Supervised learning (parametric/non-parametric algorithms, support vector machines, kernels, neural networks). (ii) Unsupervised learning (clustering, dimensionality reduction, recommender systems, deep learning). (iii) Best practices in machine learning (bias/variance theory; innovation process in machine learning and AI)."
-  certificateURL: "https://example.com"
+    name: Microsoft
+    url: https://www.microsoft.com/en-us/
+  courseOverview: "The Microsoft identity and access administrator designs, implements, and operates an organization’s identity and access management systems by using Microsoft Azure Active Directory."
+  certificateURL: "https://learn.microsoft.com/en-us/certifications/identity-and-access-administrator/"
 
-- name: Grokking the System Design Interview
-  timeline: "Jan 2018 - Sept 2018"
+- name: Cisco Certified Network Associate Routing and Switching (CCNA)
+  timeline: "Jan 2020 - Jan 2023"
   organization:
-    name: educative
-    url: https://www.educative.io
-  courseOverview: This course is a complete guide to master the SDIs. It is created by hiring managers who’ve been working at Google, Facebook, Microsoft, and Amazon. We've carefully chosen a set of questions that have not only been repeatedly asked at top companies, but also provide a thorough experience to handle any system design problem.
-  certificateURL: "https://example.com"
+    name: Cisco
+    url: https://www.cisco.com/
+  courseOverview: "CCNA exam covers networking fundamentals, IP services, security fundamentals, automation and programmability."
+  certificateURL: "https://www.cisco.com/c/en/us/training-events/training-certifications/certifications/associate/ccna.html#~about-ccna"
 
-- name: Mastering Multithreading Programming with Go (Golang)
-  timeline: "Nov 2017 - Mar 2018"
+- name: Comptia Network+
+  timeline: "May 2019 - May 2022"
   organization:
-    name: Udemy
-    url: https://www.udemy.com
-  courseOverview: Discover how to create responsive and high performance software. Develop programs with Golang that are highly Concurrent and Parallel. Improve your programming skills in Go with more advanced, mulithreading topics.
-  certificateURL: "https://example.com"
+    name: Comptia
+    url: https://www.comptia.org/
+  courseOverview: "CompTIA Network+ helps take your IT infrastructure to the next level, covering troubleshooting, configuring and managing networks."
+  certificateURL: "https://www.comptia.org/certifications/network"
+
+- name: Comptia A+ 
+  timeline: "March 2019 - May 2022"
+  organization:
+    name: Comptia
+    url: https://www.comptia.org/
+  courseOverview: "CompTIA A+ is the preferred certification for technical support and IT operational roles."
+  certificateURL: "https://www.comptia.org/certifications/a"
  
 
