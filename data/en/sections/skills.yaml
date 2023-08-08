@@ -11,39 +11,41 @@ section:
 # Your Skills.
 # Give a summary of you each skill in the summary section.
 skills:
-- name: Kubernetes
-  logo: /images/sections/skills/kubernetes.png
-  summary: "Capable of deploying, managing application on Kubernetes. Experienced in writing Kubernetes controllers for CRDs."
-  url: "https://kubernetes.io/"
+- name: PowerShell
+  logo: /images/sections/skills/PowerShell.png
+  summary: "Proficient in Hyper-V management, user administration, Graph API integration, M365 license administration, and general Windows automation."
+  url: "https://learn.microsoft.com/en-us/powershell/"
 
-- name: Go Development
-  logo: /images/sections/skills/go.png
-  summary: "Using as the main language for professional development. Capable of writing scalable, testable, and maintainable program."
-  url: "https://golang.org/"
+- name: Windows Server
+  logo: /images/sections/skills/WAC.png
+  summary: "I primarily worked with Server 2016, 2019, and 2022, gaining experience in configuring, managing, and deploying AD DS, Group Policy, DNS, DHCP, LDAPS, IIS, FSRM, and DFS."
+  url: "https://www.microsoft.com/en-us/windows-server/resources"
 
-- name: Cloud Computing
-  logo: /images/sections/skills/cloud.png
-  summary: "Worked with most of the major clouds such as GCP, AWS, Azure etc."
+- name: Hyper-V
+  logo: /images/sections/skills/hyperv.png
+  summary: "I have general experience in managing Hyper-V hosts and limited expertise in cluster management."
+  url: "https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/"
 
-- name: Docker
-  logo: /images/sections/skills/docker.svg
-  summary: "Write most of the programs as dockerized container. Experienced with multi-stage, multi-arch build process."
-  url: "https://www.docker.com/"
+- name: Patch Management
+  logo: /images/sections/skills/azure_arc.png
+  summary: "I implemented a 'Pets vs. Cattle' strategy for endpoints and server infrastructure. I am proficient with Windows Updates for Business, Azure Update Management, and its associated Azure services."
+  url: "https://learn.microsoft.com/en-us/azure/automation/update-management/overview"
 
-- name: Prometheus
-  logo: /images/sections/skills/prometheus.png
-  summary: "Capable of setup, configure Prometheus metrics. Experienced with PromQL, AlertManager. Also, experienced with writing metric exporters."
-  url: "https://prometheus.io/"
+- name: AD DS + AAD
+  logo: /images/sections/skills/aad.png
+  summary: "I am experienced in implementing, managing, and configuring Azure AD and single-domain AD DS, including features like Group Policy."
+  url: "https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/get-started/virtual-dc/active-directory-domain-services-overview"
 
-- name: Linux
-  logo: /images/sections/skills/linux.png
-  summary: "Using as the main operating system. Capable of writing bash/shell scripts."
+- name: Endpoint Management
+  logo: /images/sections/skills/intune.png
+  summary: "I maintained the desired states for over 2,000 endpoints in a production environment. I have experience managing endpoints using third-party software such as PDQ and traditional services like Intune, Group Policy, and AD."
+  url: "https://learn.microsoft.com/en-us/mem/intune/fundamentals/what-is-intune"
 
 - name: Git
   logo: /images/sections/skills/git.png
-  summary: "Experienced with git-based development. Mostly, use Github. Also, have experience in working with GitLab."
+  summary: "Experienced with git-based development. Mostly using Github."
   url: "https://git-scm.com/"
 
-- name: C++
-  logo: /images/sections/skills/c++.png
-  summary: "Know basic C/C++ programming. Used for contest programming and problem solving."
+- name: Microsoft 365 (OneDrive, SharePoint, AAD, Licensing)
+  logo: /images/sections/skills/SPO.png
+  summary: "Experience with implementation and design of Hybrid M365 transition from a primarily RDS and local mapped drive environment."
