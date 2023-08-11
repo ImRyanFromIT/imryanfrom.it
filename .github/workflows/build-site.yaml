@@ -8,11 +8,14 @@ on:
 
 jobs:
     pull:
-      runs-on: [GV-DATA01]
+      runs-on: [GV-WEB01]
       # Updates repo on file server
       steps:
         - name: Pull repo
-          run: cd /D U:\Shares\WebShare\imryanfrom.it & git pull origin master
+          run: |
+            pushd \\gv-data01\Shares\WebShare\imryanfrom.it 
+            git pull origin master
+            popd
           shell: cmd
 
     build:
@@ -27,6 +30,7 @@ jobs:
         run: |
           pushd \\gv-data01\Shares\WebShare\imryanfrom.it 
           hugo mod tidy
+          popd
         shell: cmd
 
       - name: Install node modules
@@ -34,10 +38,12 @@ jobs:
           pushd \\gv-data01\Shares\WebShare\imryanfrom.it 
           hugo mod npm pack
           npm install
+          popd
         shell: cmd
           
       - name: Build
         run: |
           pushd \\gv-data01\Shares\WebShare\imryanfrom.it
           hugo --minify
+          popd
         shell: cmd
