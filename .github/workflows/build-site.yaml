@@ -9,7 +9,7 @@ on:
 jobs:
     pull:
       runs-on: [GV-DATA01]
-
+      # Updates repo on file server
       steps:
         - name: Pull repo
           run: cd /D U:\Shares\WebShare\imryanfrom.it & git pull origin master
