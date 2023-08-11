@@ -3,7 +3,7 @@ name: Website Integrate and Deploy
 on:
     push:
         branches:
-            - main
+            - master
     workflow_dispatch:
 
 jobs:
