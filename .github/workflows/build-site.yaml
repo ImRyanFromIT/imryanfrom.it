@@ -12,7 +12,7 @@ jobs:
 
       steps:
         - name: Pull repo
-          run: cd /D U:\Shares\WebShare\imryanfrom.it & git pull origin main
+          run: cd /D U:\Shares\WebShare\imryanfrom.it & git pull origin master
           shell: cmd
 
     build:
