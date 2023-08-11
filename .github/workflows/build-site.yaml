@@ -26,28 +26,20 @@ jobs:
       - name: Enter directory
         run: pushd \\gv-data01\Shares\WebShare\imryanfrom.it
         shell: cmd
-  
-      - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v2.6.0
-        with:
-          hugo-version: 'latest'
-          extended: true
-  
+
       - name: Update Hugo Modules
         run: hugo mod tidy
-  
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-  
+        shell: cmd
+
       - name: Install node modules
         run: |
           hugo mod npm pack
           npm install
+        shell: cmd
           
       - name: Build
         run: hugo --minify
+        shell: cmd
 
       - name: Exit directory
         run: popd
