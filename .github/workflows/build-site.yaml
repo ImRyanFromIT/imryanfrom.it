@@ -10,6 +10,7 @@ jobs:
     pull:
       runs-on: [GV-WEB01]
       # Updates repo on file server
+      # triggering a push
       steps:
         - name: Pull repo
           run: |
