@@ -8,7 +8,7 @@ section:
   template: sections/about.html
 
 # your designation
-designation: Test Professional
+designation: IT Professional
 # your company information
 company:
   name: Foundations Health Solutions.
