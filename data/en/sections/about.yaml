@@ -24,27 +24,29 @@ summary: 'With over 4 years of dedicated experience in the IT industry, I take p
 # your social links
 # give as many as you want. use font-awesome for the icons.
 socialLinks:
-- name: Email
-  icon: "fas fa-envelope"
-  url: "ImRyanFromIT@gmail.com"
+#- name: Email
+#  icon: "fas fa-envelope"
+#  url: "ImRyanFromIT@gmail.com"
 
-- name: Github
-  icon: "fab fa-github"
-  url: "https://www.github.com/imryanfromit"
+#- name: Github
+#  logo: /images/sections/projects/kubernetes.png
+#  url: "https://www.github.com/imryanfromit"
 
-- name: LinkedIn
-  icon: "fab fa-linkedin"
-  url: "https://www.linkedin.com/in/ryan-merkel-b02b1b188/"
+#- name: LinkedIn
+#  icon: "fab fa-linkedin"
+#  url: "https://www.linkedin.com/in/ryan-merkel-b02b1b188/"
 
 # You can put custom buttons to link your relevant resources.
 # For example, you can put link for your resume.
 resourceLinks:
-- title: "My Resume"
+- title: "Resume"
   url: "files/resume.pdf"
 
-- name: LinkedIn
-  icon: "fab fa-linkedin"
+- title: "LinkedIn"
   url: "https://www.linkedin.com/in/ryan-merkel-b02b1b188/"
+
+- title: "Github"
+  url: "https://www.github.com/imryanfromit"
 
 # Show your badges
 # You can show your verifiable certificates from https://www.credly.com.
