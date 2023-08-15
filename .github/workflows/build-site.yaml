@@ -27,7 +27,7 @@ jobs:
       # checkout to the commit that has been pushed
       - uses: actions/checkout@v3
 
-      - name: Update Hugo Modules
+      - name: Update Hugo modules
         run: |
           pushd \\gv-data01\Shares\WebShare\imryanfrom.it 
           hugo mod tidy
@@ -42,7 +42,7 @@ jobs:
           popd
         shell: cmd
           
-      - name: Build
+      - name: Build the website
         run: |
           pushd \\gv-data01\Shares\WebShare\imryanfrom.it
           hugo --minify
