@@ -42,6 +42,10 @@ resourceLinks:
 - title: "My Resume"
   url: "files/resume.pdf"
 
+- name: LinkedIn
+  icon: "fab fa-linkedin"
+  url: "https://www.linkedin.com/in/ryan-merkel-b02b1b188/"
+
 # Show your badges
 # You can show your verifiable certificates from https://www.credly.com.
 # You can also show a circular bar indicating the level of expertise on a certain skill
