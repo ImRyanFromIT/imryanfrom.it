@@ -8,7 +8,7 @@ on:
 
 jobs:
     pull:
-      runs-on: [GV-WEB01]
+      runs-on: [GV-DATA01]
       # Updates repo on file server
       # triggering a push
       steps:
@@ -20,7 +20,7 @@ jobs:
           shell: cmd
 
     build:
-      runs-on: [GV-WEB01]
+      runs-on: [GV-DATA01]
       needs: pull
 
       steps:
