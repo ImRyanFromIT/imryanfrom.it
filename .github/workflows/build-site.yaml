@@ -1,16 +1,23 @@
+# Name of the action
 name: Website Integrate and Deploy
 
+# Workflow triggers
+# either triggers on a push to the main branch, or via a button in Github(workflow dispatch field)
 on:
     push:
         branches:
             - master
     workflow_dispatch:
 
+# Jobs within the workflow. In this example there are 2. The pull job and the build job. Its important to note that jobs in Github actions run 
+# concurrently, so in the 'build' job, we have the field 'needs: pull' to force it to wait for a success from the 'pull' job
+
+# The pull's job is to pull the updated repository from Github to the file server. We're using pushd and popd to circumvent network path issues. 
+# pushd opens the network path, popd closes it. 
 jobs:
     pull:
       runs-on: [GV-BUILD01]
-      # Updates repo on file server
-      # triggering a push
+
       steps:
         - name: Pull repo
           run: |
@@ -19,14 +26,13 @@ jobs:
             popd
           shell: cmd
 
+# The build's job is to integrate the changes and build it in Hugo. It consists of three parts. The first is to update Hugo modules, the second is
+# install and update the node modules, and the third is to put everything together and build the website. 
     build:
       runs-on: [GV-BUILD01]
       needs: pull
 
       steps:
-      # checkout to the commit that has been pushed
-      - uses: actions/checkout@v3
-
       - name: Update Hugo modules
         run: |
           pushd \\gv-data01\Shares\WebShare\imryanfrom.it 
