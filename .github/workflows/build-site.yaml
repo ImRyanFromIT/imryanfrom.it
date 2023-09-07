@@ -9,7 +9,7 @@ on:
             - master
     workflow_dispatch:
 
-# Jobs within the workflow. In this example there are 2. The pull job and the build job. Its important to note that jobs in Github actions run 
+# Jobs within the workflow. In this example there are 2. The pull job and the build job. It's important to note that jobs in Github actions run 
 # concurrently, so in the 'build' job, we have the field 'needs: pull' to force it to wait for a success from the 'pull' job
 
 # The pull's job is to pull the updated repository from Github to the file server. We're using pushd and popd to circumvent network path issues. 
