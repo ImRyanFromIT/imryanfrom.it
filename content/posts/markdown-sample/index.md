@@ -11,6 +11,7 @@ author:
   name: Jessica Jonas
   image: /images/author/jessica.png
 math: true
+draft: true
 ---
 
 This is a sample post intended to test the followings:
