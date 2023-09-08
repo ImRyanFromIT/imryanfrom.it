@@ -10,7 +10,7 @@ menu:
 hero: IIS-Featured-Image.jpg
 draft: false
 ---
-## What I Did and Why I Did It, and How You Can Too
+## What I Did, Why I Did It, and How You Can Too
 A little while ago I had my fill of using 3 HP Prodesks in a cardboard box as my homelab and decided to spring for something a little easier to work with, purchasing a ProLiant DL360 from ebay. One of my primary goals at the start was to lab it up and make something that seemed interesting and useful. Having a decent tenure in professional Googling, I’ve noticed that the people who create extremely detailed guides on [obscure driver+OS combinations](https://blog.workinghardinit.work/2017/06/19/installing-intel-i211-i217v-i218v-i219v-drivers-windows-server-2016-eufi-boot/), or [make public their trove of tutorials](https://laurakokkarinen.com/auto-configuring-sharepoint-sites-with-site-templates-the-setup-from-start-to-finish/) always have their own blog. With this important information in mind I decided I’d make one too. 
 
 ## What I've Done
@@ -285,3 +285,5 @@ New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders
 #### The SSL Certificate 
 There are a lot of great resources online for creating your own SSL certificates. [Let’s Encrypt](https://letsencrypt.org/) and [OpenSSL](https://www.openssl.org/) are both great tools with step-by-step tutorials. Choose whichever you want and create your own. One important note that tripped me up though, is that you’ll need the HTTP port opened. A lot of ISPs block this by default so definitely go check before you start. If you find yourself blocked by that you can always purchase an SSL from a store online. Alternatively you can probably just spin up a VM in Azure/AWS/GCP/whatever and generate it on their networks.
 
+# Summary
+Overall this was a pretty fun project. I don’t have much experience around the web space so breaking everything down and seeing how this stuff works ended up being very interesting. However, I’m not done yet. There are still a couple of things that need fixing to make this blog a little less annoying to manage. Specifically, I’d like to automate the integration and deployment of pages so all these changes I’m making won’t have to be so excruciatingly manual. [Part 2 found here.]
