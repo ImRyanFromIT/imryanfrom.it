@@ -285,5 +285,5 @@ New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders
 #### The SSL Certificate 
 There are a lot of great resources online for creating your own SSL certificates. [Let’s Encrypt](https://letsencrypt.org/) and [OpenSSL](https://www.openssl.org/) are both great tools with step-by-step tutorials. Choose whichever you want and create your own. One important note that tripped me up though, is that you’ll need the HTTP port opened. A lot of ISPs block this by default so definitely go check before you start. If you find yourself blocked by that you can always purchase an SSL from a store online. Alternatively you can probably just spin up a VM in Azure/AWS/GCP/whatever and generate it on their networks.
 
-# Summary
+### Summary
 Overall this was a pretty fun project. I don’t have much experience around the web space so breaking everything down and seeing how this stuff works ended up being very interesting. However, I’m not done yet. There are still a couple of things that need fixing to make this blog a little less annoying to manage. Specifically, I’d like to automate the integration and deployment of pages so all these changes I’m making won’t have to be so excruciatingly manual. [Part 2 found here.]
