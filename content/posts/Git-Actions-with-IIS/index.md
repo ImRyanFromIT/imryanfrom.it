@@ -165,3 +165,8 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem ; [System.IO.Compression
 
 **Checking GitHub can see the runner**
 {{< img src="/posts/Git-Actions-with-IIS/Gactions5.png" height="272" width="624" align="left" title="Gactions5" >}}
+
+### The Dubious User 
+When running the action you might notice an error yelling at you about a ‘dubious user’. You can fix this issue by setting the owner to the repository folder on the data server to the service account you’re using for the runner. For other solutions or workarounds, consult:
+1. [This atlassian post](https://confluence.atlassian.com/bbkb/git-command-returns-fatal-error-about-the-repository-being-owned-by-someone-else-1167744132.html)
+2. [This guy's post](https://weblog.west-wind.com/posts/2023/Jan/05/Fix-that-damn-Git-Unsafe-Repository)
