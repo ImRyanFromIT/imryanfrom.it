@@ -87,10 +87,10 @@ Write-Host "IIS Central Certificate Store has been configured."
 {{< /highlight >}}
 
 4. Site and Bindings
-    * Finally it's time to configure the IIS site and its bindings. This points people trying to access the website to the specific IIS server within my network. 
+    * Finally it's time to configure the IIS site and its bindings. This points people trying to access the website to the specific site and IIS server within my network. 
     * The below script has three parts to it
         * The first part removes the default site if it's around. This isn’t necessary but It makes the web server a little cleaner. 
-        * The second part is the site creation sauce. It creates the site, changes the path from inetpub to my file server, and creates the HTTPS bindings.
+        * The second part is the site creation sauce. It creates the site, changes the path from inetpub(which is the default location for web content) to the file server, and creates the HTTPS bindings.
         * The third solves a quirk of the AppPoolConfiguration script, and configures anonymous authentication from the App Pool to the App Pool’s service account. 
         * Variables to change are **$siteName**, **$physicalPath**, **$bindingInformation1**, and **$bindingInformation2**.
 
@@ -128,10 +128,10 @@ Write-Host "Set anonymous authentication to use application pool identity for $s
 
 5. Voilà!
     * Assuming you completed the preparatory steps correctly and have changed the variables in the above commands to reflect your environment, then you’ll have an up and running website! However, we aren’t yet finished.
-    * What if you want your website to be secure? Out of the box defaults for IIS can and should be tweaked. What if you want to make a change to your website? What if you want to write a blog? It's pretty annoying to have to hugo server -w and copy files into the file server. There are better ways to live! Answers to security, convenience, and more found deeper in this post. 
+    * What if you want your website to be secure? Out of the box defaults for IIS can and should be tweaked. 
 
 ### Security
-Web servers, specifically IIS, present very scary security challenges. One of the major benefits of having a vendor create and host your website is that you don’t have to worry as much about addressing all that annoying security stuff. However, as we’re self hosting, and it's paramount to provide powerful protection precipitating publishing. I’ve broken the steps I took into two sections - network security and system security. Please keep in mind these are recommendations, and you certainly should do more, less, or tweak what I’ve done to best fit your environment. 
+Web servers present very spooky security challenges. One of the major benefits of having a vendor create and host your website is that you don’t have to worry as much about addressing all that annoying security stuff. However, as we’re self hosting, and it's paramount to provide powerful protection precipitating publishing. I’ve broken the steps I took into two sections - network security and system security. Please keep in mind these are recommendations, and you certainly should do more, less, or tweak what I’ve done to best fit your environment. 
 
 #### Network Security
 1. I've only exposed the HTTPS port to the internet. 
@@ -281,3 +281,7 @@ New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders
 (Get-Item 'HKLM:\').OpenSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers', $true).CreateSubKey('AES 256/256')
 New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 256/256' -name 'Enabled' -value '1' -PropertyType 'DWord' -Force | Out-Null
 {{< /highlight >}}
+
+#### Certificates 
+There are a lot of great resources online for creating your own SSL certificates. [Let’s Encrypt](https://letsencrypt.org/) and [OpenSSL](https://www.openssl.org/) are both great tools with step-by-step tutorials. Choose whichever you want and create your own. One important note that tripped me up though, is that you’ll need the HTTP port opened. A lot of ISPs block this by default so definitely go check before you start. If you find yourself blocked by that you can always purchase an SSL from a store online. Alternatively you can probably just spin up a VM in Azure/AWS/GCP/whatever and generate it on their networks.
+
