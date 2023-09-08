@@ -45,17 +45,13 @@ on:
             - master
     workflow_dispatch:
 
-
-# Jobs within the workflow. In this example there are 2. The pull job and the build job. It's important to note that jobs in Github actions run
-# concurrently, so in the 'build' job, we have the field 'needs: pull' to force it to wait for a success from the 'pull' job
-
+# Jobs within the workflow. In this example there are 2. The pull job and the build job. It's important to note that jobs in Github actions run concurrently, so in the 'build' job, we have the field 'needs: pull' to force it to wait for a success from the 'pull' job
 
 # The pull's job is to pull the updated repository from Github to the file server. We're using pushd and popd to circumvent network path issues.
 # pushd opens the network path, popd closes it.
 jobs:
     pull:
       runs-on: [GV-BUILD01]
-
 
       steps:
         - name: Pull repo
@@ -65,13 +61,10 @@ jobs:
             popd
           shell: cmd
 
-
-# The build's job is to integrate the changes and build it in Hugo. It consists of three parts. The first is to update Hugo modules, the second is
-# install and update the node modules, and the third is to put everything together and build the website.
+# The build's job is to integrate the changes and build it in Hugo. It consists of three parts. The first is to update Hugo modules, the second is install and update the node modules, and the third is to put everything together and build the website.
     build:
       runs-on: [GV-BUILD01]
       needs: pull
-
 
       steps:
       - name: Update Hugo modules
@@ -80,7 +73,6 @@ jobs:
           hugo mod tidy
           popd
         shell: cmd
-
 
       - name: Install node modules
         run: |
