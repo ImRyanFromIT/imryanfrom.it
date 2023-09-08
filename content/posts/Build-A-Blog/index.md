@@ -130,3 +130,155 @@ Write-Host "Set anonymous authentication to use application pool identity for $s
     * Assuming you completed the preparatory steps correctly and have changed the variables in the above commands to reflect your environment, then you’ll have an up and running website! However, we aren’t yet finished.
     * What if you want your website to be secure? Out of the box defaults for IIS can and should be tweaked. What if you want to make a change to your website? What if you want to write a blog? It's pretty annoying to have to hugo server -w and copy files into the file server. There are better ways to live! Answers to security, convenience, and more found deeper in this post. 
 
+### Security
+Web servers, specifically IIS, present very scary security challenges. One of the major benefits of having a vendor create and host your website is that you don’t have to worry as much about addressing all that annoying security stuff. However, as we’re self hosting, and it's paramount to provide powerful protection precipitating publishing. I’ve broken the steps I took into two sections - network security and system security. Please keep in mind these are recommendations, and you certainly should do more, less, or tweak what I’ve done to best fit your environment. 
+
+#### Network Security
+1. I've only exposed the HTTPS port to the internet. 
+2. I’m using a reverse proxy so I don’t broadcast my WAN address to the world. Specifically, I’m using Cloudflare’s free reverse proxy service. You can find out more about it here. 
+3. I’m ensuring my networking equipment is continually updated.
+4. IIS server is segmented off on a different VLAN 
+
+#### System Security
+I’m using CIS recommendations for Microsoft IIS 10 security benchmarks. I love this organization and highly recommend it to anyone else in the infrastructure space. If a recommendation by RyanFromIT isn’t enough, here's why Microsoft recommends them. Due to my home lab not holding any sensitive information, I’m going to use the Level 1 Policy Definitions for **Basic Configurations**, **Request Filtering and Other Restriction Modules**, **IIS Logging Recommendations**, and **Transport Encryption sections**. All other sections I’ll be ignoring as they’re not applicable to my web server. Brief overview of changes I'm making are below. If you'd like to know more, I highly encourage you check them out yourself here. 
+1. Basic Configurations
+    * (L1) Ensure 'Web content' is on non-system partition
+        * Completed by moving configuring the site to point to a file server
+    * (L1) Ensure 'application pool identity' is configured for anonymous user identity
+        * Completed in Site and Bindings section
+2. Request Filtering
+    * (L1) Ensure Double-Encoded requests will be rejected
+    * (L1) Ensure Dynamic IP Address Restrictions' is enabled
+3. Logging Recommendations
+    * (L1) Ensure Advanced IIS logging is enabled (Automated)
+        * We installed the feature for it
+    * (L1) Ensure Default IIS web log location is moved (Automated) 
+4. Transport Encryption
+    * (L1) Ensure SSLv2 is Disabled
+    * (L1) Ensure SSLv3 is Disabled
+    * (L1) Ensure TLS 1.0 is Disabled
+    * (L1) Ensure TLS 1.1 is Disabled
+    * (L1) Ensure TLS 1.2 is Enabled
+    * Ensure TLS 1.3 is Enabled
+    * (L1) Ensure NULL Cipher Suites is Disabled
+    * (L1) Ensure DES Cipher Suites is Disabled
+    * (L1) Ensure RC4 Cipher Suites is Disabled
+    * (L1) Ensure AES 128/128 Cipher Suite is Disabled 
+    * (L1) Ensure AES 256/256 Cipher Suite is Enabled
+
+
+
+{{< highlight PowerShell >}}
+# Came from recommendations below https://www.cisecurity.org/benchmark/microsoft_iis
+
+##############################################################################################################
+###                                          Request Filtering                                             ###
+##############################################################################################################
+
+# (L1) Ensure Double-Encoded requests will be rejected
+# Description: This Request Filter feature prevents attacks that rely on double-encoded requests and applies if an attacker submits a double-encoded request to IIS. When 
+# the double-encoded requests filter is enabled, IIS will go through a two iteration process of normalizing the request. If the first normalization differs from the second, 
+# the request is rejected and the error code is logged as a 404.11. The double-encoded requests filter was the VerifyNormalization option in UrlScan
+Set-WebConfigurationProperty -pspath 'MACHINE/WEBROOT/APPHOST' -filter "system.webServer/security/requestFiltering" -name "allowDoubleEscaping" - value "True"
+
+# (L1) Ensure 'Dynamic IP Address Restrictions' is enabled
+# Dynamic IP address filtering allows administrators to configure the server to block access for IPs that exceed the specified number of requests or request frequency.
+$requestNumber = "10" # Restricts number of concurrent requests
+Set-WebConfigurationProperty -pspath 'MACHINE/WEBROOT/APPHOST' -filter "system.webServer/security/dynamicIpSecurity/denyByConcurrentRequests" -name "enabled" -value "True"
+Set-WebConfigurationProperty -pspath 'MACHINE/WEBROOT/APPHOST' -filter "system.webServer/security/dynamicIpSecurity/denyByConcurrentRequests" -name "maxConcurrentRequests" -value $requestNumber
+
+
+##############################################################################################################
+###                                       Logging Recommendations                                          ###
+##############################################################################################################
+
+# IIS will log relatively detailed information on every request. These logs are usually the first item looked at in a security response and can be the most valuable. Malicious 
+# users are aware of this and will often try to remove evidence of their activities. It is recommended that the default location for IIS log files be changed to a restricted, non-system drive.
+# Description: 
+$logDirectory = "\\Share\Logs" # Your log location
+Set-WebConfigurationProperty -pspath 'MACHINE/WEBROOT/APPHOST' -filter "system.applicationHost/sites/siteDefaults/logFile" -name "directory" -value $logDirectory
+
+
+##############################################################################################################
+###                                         Transport Encryption                                           ###
+##############################################################################################################
+
+# (L1) Ensure SSLv2 is Disabled
+# Description: The SSLv2 protocol is not considered cryptographically secure, therefore should be disabled.
+New-Item 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\ SSL 2.0\Server' -Force | Out-Null
+New-Item 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\ SSL 2.0\Client' -Force | Out-Null
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0\Server' -name 'Enabled' -value '0' -PropertyType 'DWord' -Force | Out-Null
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0\Client' -name 'Enabled' -value '0' -PropertyType 'DWord' -Force | Out-Null
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0\Server' -name 'DisabledByDefault' -value '1' -PropertyType 'DWord' -Force | Out-Null
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0\Client' -name 'DisabledByDefault' -value '1' -PropertyType 'DWord' -Force | Out-Null
+
+# (L1) Ensure SSLv3 is Disabled
+# Description: The SSLv3 protocol is not considered cryptographically secure, therefore should be disabled.
+New-Item 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Server' -Force | Out-Null
+New-Item 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Client' -Force | Out-Null
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Server' -name 'Enabled' -value '0' -PropertyType 'DWord' -Force | Out-Null
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Client' -name 'Enabled' -value '0' -PropertyType 'DWord' -Force | Out-Null
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Server' -name 'DisabledByDefault' -value '1' -PropertyType 'DWord' -Force | Out-Null
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Client' -name 'DisabledByDefault' -value '1' -PropertyType 'DWord' -Force | Out-Null
+
+# (L1) Ensure TLS 1.0 is Disabled
+# Description: The TLS 1.0 protocol is not considered cryptographically secure, therefore should be disabled.
+New-Item 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0\Server' -Force | Out-Null
+New-Item 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0\Client' -Force | Out-Null
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0\Server' -name 'Enabled' -value '0' -PropertyType 'DWord' -Force | Out-Null
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0\Client' -name 'Enabled' -value '0' -PropertyType 'DWord' -Force | Out-Null
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0\Server' -name 'DisabledByDefault' -value '1' -PropertyType 'DWord' -Force | Out-Null
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0\Client' -name 'DisabledByDefault' -value '1' -PropertyType 'DWord' -Force | Out-Null
+
+# (L1) Ensure TLS 1.1 is Disabled
+# Description: The TLS 1.0 protocol is not considered cryptographically secure, therefore should be disabled.
+New-Item 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Server' -Force | Out-Null
+New-Item 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Client' -Force | Out-Null
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Server' -name 'Enabled' -value '0' -PropertyType 'DWord' -Force | Out-Null
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Client' -name 'Enabled' -value '0' -PropertyType 'DWord' -Force | Out-Null
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Server' -name 'DisabledByDefault' -value '1' -PropertyType 'DWord' -Force | Out-Null
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Client' -name 'DisabledByDefault' -value '1' -PropertyType 'DWord' -Force | Out-Null
+
+# (L1) Ensure TLS 1.2 is Enabled
+# Description: TLS 1.2 is a more recent and mature protocol for protecting the confidentiality and integrity of HTTP traffic.
+New-Item 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Server' -Force | Out-Null
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Server' -name 'Enabled' -value '1' -PropertyType 'DWord' -Force | Out-Null
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Server' -name 'DisabledByDefault' -value '0' -PropertyType 'DWord' -Force | Out-Null
+
+# Ensure TLS 1.3 is Enabled
+# Description: TLS 1.3 is most recent
+New-Item 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.3\Server' -Force | Out-Null
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.3\Server' -name 'Enabled' -value '1' -PropertyType 'DWord' -Force | Out-Null
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.3\Server' -name 'DisabledByDefault' -value '0' -PropertyType 'DWord' -Force | Out-Null
+
+# (L1) Ensure NULL Cipher Suites is Disabled
+# Description: The NULL cipher does not provide data confidentiality or integrity, therefore it is recommended that the NULL cipher be disabled.
+New-Item 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\NULL' -Force | Out-Null
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\NULL' -name 'Enabled' -value '0' -PropertyType 'DWord' -Force | Out-Null
+
+# (L1) Ensure DES Cipher Suites is Disabled
+# Description: The DES Cipher Suite is considered a weak symmetric-key cipher, therefore it is recommended that it be disabled.
+(Get-Item 'HKLM:\').OpenSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers', $true).CreateSubKey('DES 56/56')
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\DES 56/56' -name 'Enabled' -value '0' -PropertyType 'DWord' -Force | Out-Null
+
+# (L1) Ensure RC4 Cipher Suites is Disabled
+# Description: The RC4 Cipher Suites are considered insecure, therefore should be disabled.
+(Get-Item 'HKLM:\').OpenSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers', $true).CreateSubKey('RC4 40/128')
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 40/128' -name 'Enabled' -value '0' -PropertyType 'DWord' -Force | Out-Null
+(Get-Item 'HKLM:\').OpenSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers', $true).CreateSubKey('RC4 56/128')
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 56/128' -name 'Enabled' -value '0' -PropertyType 'DWord' -Force | Out-Null
+(Get-Item 'HKLM:\').OpenSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers', $true).CreateSubKey('RC4 64/128')
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 64/128' -name 'Enabled' -value '0' -PropertyType 'DWord' -Force | Out-Null
+(Get-Item 'HKLM:\').OpenSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers', $true).CreateSubKey('RC4 128/128')
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 128/128' -name 'Enabled' -value '0' -PropertyType 'DWord' -Force | Out-Null
+
+# (L1) Ensure AES 128/128 Cipher Suite is Disabled 
+# Description: The AES 128/128 Cipher Suite is not considered secure and therefore should be disabled, if possible
+(Get-Item 'HKLM:\').OpenSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers', $true).CreateSubKey('AES 128/128')
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 128/128' -name 'Enabled' -value '0' -PropertyType 'DWord' -Force | Out-Null
+
+# (L1) Ensure AES 256/256 Cipher Suite is Enabled
+# Description: AES 256/256 is the most recent and mature cipher suite for protecting the confidentiality and integrity of HTTP traffic. Enabling AES 256/256 is recommended.
+(Get-Item 'HKLM:\').OpenSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers', $true).CreateSubKey('AES 256/256')
+New-ItemProperty -path 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 256/256' -name 'Enabled' -value '1' -PropertyType 'DWord' -Force | Out-Null
+{{< /highlight >}}
