@@ -156,6 +156,6 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem ; [System.IO.Compression
   * If you make a mistake on the username part you’ll need to completely uninstall the runner and try again. 
 
 10. Looks good! Lets check our services and GitHub's Runners page to make sure everything looks like it should. 
-{{< img src="/posts/Git-Actions-with-IIS/Gactions3.png" height="624" width="273" align="center" title="Gactions3" >}}
-{{< img src="/posts/Git-Actions-with-IIS/Gactions4.png" height="578" width="81" align="center" title="Gactions4" >}}
-{{< img src="/posts/Git-Actions-with-IIS/Gactions5.png" height="624" width="272" align="center" title="Gactions5" >}}
+{{< img src="/posts/Git-Actions-with-IIS/Gactions3.png" height="273" width="624" align="center" title="Gactions3" >}}
+{{< img src="/posts/Git-Actions-with-IIS/Gactions4.png" height="81" width="578" align="center" title="Gactions4" >}}
+{{< img src="/posts/Git-Actions-with-IIS/Gactions5.png" height="272" width="624" align="center" title="Gactions5" >}}
