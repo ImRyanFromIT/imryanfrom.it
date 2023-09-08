@@ -41,10 +41,92 @@ The three primary goals I have with IIS hosting are to keep everything simple, s
 I used PowerShell primarily deploy and configure IIS and the scripts used can be found here or below.[1]
 
 1. Roles and Features
-  * As with any Windows server, you should only install the roles and feature you need. Below is what I consider the minimum when deploying IIS for the first time. 
+    * As with any Windows server, you should only install the roles and feature you need. Below is what I consider the minimum when deploying IIS for the first time. 
 
 {{< highlight PowerShell >}}
 Install-WindowsFeature -Name Web-Server, Web-HTTP-Logging, Web-Log-Libraries, Web-Filtering, Web-CertProvider, Web-Http-Redirect -includemanagementtools
 
 Write-Host "Features have been installed" 
 {{< /highlight >}}
+
+2. App Pool Configuration
+    * IIS has a feature called an application pool. Each application pool houses applications or sites on IIS. They provide lots of features, but we’ll be using it primarily to provide the authentication necessary to access the website files on my file server, and to manage security. 
+    * Because I’m not working with multiple application pools in my environment, I’m just using the default pool to keep it simple. The script below prompts for credentials, and then configures the app pool to use those credentials instead of pass-through authentication. We’ll be using the service account that was setup earlier. 
+    * Variables to change are **$app_pool_name**
+
+{{< highlight PowerShell >}}
+Import-Module WebAdministration
+
+$app_pool_name = "DefaultAppPool" # change to your app pool name
+
+$credentials = (Get-Credential -Message "Please enter the Login credentials including Domain Name").GetNetworkCredential()
+$userName = $credentials.Domain + '\' + $credentials.UserName
+
+Set-ItemProperty IIS:\AppPools\$app_pool_name -name processModel.identityType -Value 3
+Set-ItemProperty IIS:\AppPools\$app_pool_name -name processModel.userName -Value $username
+Set-ItemProperty IIS:\AppPools\$app_pool_name -name processModel.password -Value $credentials.Password
+
+Write-Host "$app_pool_name has been configured."
+{{< /highlight >}}
+
+3. Central Certificate Store
+    * We’re using a central certificate store to centrally store our certificates. Staying true to the theme of simplicity, I want to keep as much possible off of the web server as possible. This includes certificates, and the IIS Central Certificate Store allows us to do this. If you don't care, you’re also able to just copy the SSL cert locally to the Web server and specify it in the bindings section of your site.
+    * You’ll also be prompted to enter the PrivateKeyPassword for your .pfx certificate. 
+    * Keep in mind the store only works with .pfx files, so if you have any .crt certificates you’ll need to convert them. I used OpenSSL for this, and will cover it briefly later in this post. 
+    * Variables to change are **$certStore**
+
+{{< highlight PowerShell >}}
+Import-Module IISAdministration
+
+$certStore = "\\gv-data01\Shares\WebShare\SSL Central Store" # Change to your certificate store path
+$c = Get-Credential # Prompts for certificate management service account
+
+Enable-IISCentralCertProvider -CertStoreLocation $certStore -UserName $c.Username -Password $c.Password
+
+Write-Host "IIS Central Certificate Store has been configured."
+{{< /highlight >}}
+
+4. Site and Bindings
+    * Finally it's time to configure the IIS site and its bindings. This points people trying to access the website to the specific IIS server within my network. 
+    * The below script has three parts to it
+        * The first part removes the default site if it's around. This isn’t necessary but It makes the web server a little cleaner. 
+        * The second part is the site creation sauce. It creates the site, changes the path from inetpub to my file server, and creates the HTTPS bindings.
+        * The third solves a quirk of the AppPoolConfiguration script, and configures anonymous authentication from the App Pool to the App Pool’s service account. 
+        * Variables to change are **$siteName**, **$physicalPath**, **$bindingInformation1**, and **$bindingInformation2**.
+
+{{< highlight PowerShell >}}
+Import-Module IISAdministration
+
+
+# Remove Default Web Site
+if (Get-IISSite -Name "Default Web Site") {
+    Remove-iissite -Name "Default Web Site" -Confirm
+    Write-Host "Default Web Site has been deleted."
+}
+
+# Variables
+$siteName = "imryanfrom.it"
+$physicalPath = "\\gv-data01\Shares\WebShare\imryanfrom.it\public" # Update this to your desired path
+$bindingInformation1 = "*:443:imryanfrom.it"
+$bindingInformation2 = "*:443:www.imryanfrom.it"
+
+# Create new IIS website - bind both
+New-IISSite -Name $siteName -PhysicalPath $physicalPath -BindingInformation $bindingInformation1 -Protocol "https" -sslFlag "CentralCertStore"
+New-IISSiteBinding -Name $siteName $bindingInformation2 -Protocol "https" -sslFlag "CentralCertStore"
+
+Write-Host "Website $siteName created with HTTPS binding."
+
+# Ensure the WebAdministration module is loaded
+Import-Module WebAdministration
+
+# Set anonymous authentication to use the application pool identity
+Set-WebConfigurationProperty -Filter "/system.webServer/security/authentication/anonymousAuthentication" -Name "username" -Location $siteName -Value ""
+Set-WebConfigurationProperty -Filter "/system.webServer/security/authentication/anonymousAuthentication" -Name "password" -Location $siteName -Value ""
+
+Write-Host "Set anonymous authentication to use application pool identity for $siteName."
+{{< /highlight >}}
+
+5. Voilà!
+    * Assuming you completed the preparatory steps correctly and have changed the variables in the above commands to reflect your environment, then you’ll have an up and running website! However, we aren’t yet finished.
+    * What if you want your website to be secure? Out of the box defaults for IIS can and should be tweaked. What if you want to make a change to your website? What if you want to write a blog? It's pretty annoying to have to hugo server -w and copy files into the file server. There are better ways to live! Answers to security, convenience, and more found deeper in this post. 
+
