@@ -27,4 +27,4 @@ Simple website gets a simple design. There are three machines involved in making
 4. Web content and SSL certificates are much easier to manage when everything is centralized
 Eventually the web and build servers can be containerized for further efficiency gains, but I'm keeping it simple for now. 
 
-{{< img src="/posts/Git-Actions-with-IIS/GrandDesigns.png" height="400" width="600" align="center" title="Artist's Rendition" >}}
+{{< img src="/posts/Git-Actions-with-IIS/GrandDesigns.png" height="200" width="400" align="center" title="Artist's Rendition" >}}
