@@ -11,7 +11,7 @@ hero: boat.jpg
 draft: false
 ---
 ## What I did and why I did it, and how you can too
-A little while ago I had my fill of using 3 HP Prodesks in a cardboard box as my homelab and decided to spring for something a little easier to work with, purchasing a ProLiant DL360 from ebay. One of my primary goals at the start was to lab it up and make something that seemed interesting and useful. Having a decent tenure in professional Googling, I’ve noticed that the people who create extremely detailed guides on obscure driver+OS combinations[1], or make public their trove of tutorials[2] always have their own blog. With this important information in mind I decided I’d make one too. 
+A little while ago I had my fill of using 3 HP Prodesks in a cardboard box as my homelab and decided to spring for something a little easier to work with, purchasing a ProLiant DL360 from ebay. One of my primary goals at the start was to lab it up and make something that seemed interesting and useful. Having a decent tenure in professional Googling, I’ve noticed that the people who create extremely detailed guides on [obscure driver+OS combinations](https://blog.workinghardinit.work/2017/06/19/installing-intel-i211-i217v-i218v-i219v-drivers-windows-server-2016-eufi-boot/), or make public their trove of tutorials[2] always have their own blog. With this important information in mind I decided I’d make one too. 
 
 ## What I've done
 
@@ -153,6 +153,7 @@ I’m using CIS recommendations for Microsoft IIS 10 security benchmarks. I love
     * (L1) Ensure Advanced IIS logging is enabled (Automated)
         * We installed the feature for it
     * (L1) Ensure Default IIS web log location is moved (Automated) 
+        * Make sure you change the value in below script to your choosen location
 4. Transport Encryption
     * (L1) Ensure SSLv2 is Disabled
     * (L1) Ensure SSLv3 is Disabled
@@ -165,8 +166,6 @@ I’m using CIS recommendations for Microsoft IIS 10 security benchmarks. I love
     * (L1) Ensure RC4 Cipher Suites is Disabled
     * (L1) Ensure AES 128/128 Cipher Suite is Disabled 
     * (L1) Ensure AES 256/256 Cipher Suite is Enabled
-
-
 
 {{< highlight PowerShell >}}
 # Came from recommendations below https://www.cisecurity.org/benchmark/microsoft_iis
