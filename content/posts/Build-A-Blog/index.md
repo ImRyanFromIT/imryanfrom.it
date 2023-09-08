@@ -1,6 +1,6 @@
 ---
 title: "Build-A-Blog"
-date: 2020-06-08T08:06:25+06:00
+date: 2023-09-08T08:06:25+06:00
 description: How to build your own blog from "scratch"
 menu:
   sidebar:
