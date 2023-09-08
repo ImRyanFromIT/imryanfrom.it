@@ -32,7 +32,7 @@ Eventually the web and build servers can be containerized for further efficiency
 {{< img src="/posts/Git-Actions-with-IIS/GrandDesigns.png" height="150" width="400" align="center" title="Artist's Rendition" >}}
 
 ### Creating the Build Action
-Github Actions aren’t actually all that complicated if you don’t want them to be. We’ll be using the below action to ensure changes pushed to the master repository are automatically pushed to the IIS. Make sure to change the paths to fit your usage. 
+Github Actions aren’t actually all that complicated if you don’t want them to be. We’ll be using the below action to ensure changes pushed to the master repository are automatically pushed to the IIS. Make sure to change the paths and the runs-on field to fit your usage. 
 
 {{< highlight yaml >}}
 # Name of the action
@@ -92,12 +92,13 @@ jobs:
 {{< /highlight >}}
 
 ### Configuring GV-BUILD
-Our build server needs Hugo and Toha dependencies preinstalled in order for our actions script to work. We’ll use Chocolatey and a batch file to take care of this. Script is named IIS_BuildDependencies.bat [found here](https://github.com/ImRyanFromIT/PowerShell_Misc/tree/master/IIS). It installs
+Our build server needs Hugo and Toha dependencies preinstalled in order for our actions script to work. We’ll use Chocolatey and a batch file to take care of this. Script is named IIS_BuildDependencies.bat [found here](https://github.com/ImRyanFromIT/PowerShell_Misc/tree/master/IIS). It installs:
 1. Chocolatey
 2. Hugo
 3. GoLang
 4. Node JS
 5. Git
+
 {{< highlight bat >}}
 @echo off
 echo Installing Chocolatey
@@ -118,3 +119,43 @@ choco install git.install -y
 
 ### Installing the Runner Agent
 We’ll be installing a self-hosted runner on the build server as a service. Therefore, please ensure you’ve created a service account specifically for this process. I’m using a standard service account called IISRunner. 
+1. Log into Github and head over into **Repository > Settings > Runners > Create self-hosted runner**
+2. Run the script on that page in PowerShell, or the one below. Make sure you’re in your drive root before running this script. If you want to mess around with the location, please consult Github’s documentation on self-hosted runners. When I tried to move the install(and the _work folder) to a different location it caused issues.
+{{< highlight PowerShell >}}
+# Create a folder under the drive root
+mkdir actions-runner; cd actions-runner
+# Download the latest runner package
+Invoke-WebRequest -Uri https://github.com/actions/runner/releases/download/v2.308.0/actions-runner-win-x64-2.308.0.zip -OutFile actions-runner-win-x64-2.308.0.zip
+# Optional: Validate the hash
+if((Get-FileHash -Path actions-runner-win-x64-2.308.0.zip -Algorithm SHA256).Hash.ToUpper() -ne '05aa7d07223e7591f138db5a6a5f1b6f24ed22ab8b539307a6cf899f377f320f'.ToUpper()){ throw 'Computed checksum did not match' }
+# Extract the installer
+Add-Type -AssemblyName System.IO.Compression.FileSystem ; [System.IO.Compression.ZipFile]::ExtractToDirectory("$PWD/actions-runner-win-x64-2.308.0.zip", "$PWD")
+{{< /highlight >}}
+
+3. Run the **configure** script in the Github page referenced above. It’ll include a specific token you’ll need. Looks like this:
+{{< highlight PowerShell >}}
+# Create the runner and start the configuration experience
+./config.cmd --url https://github.com/ImRyanFromIT/imryanfrom.it --token 123456789ABCDEFGHIJKLMN
+# Run it!
+./run.cmd
+{{< /highlight >}}
+
+4. If successful, getting started will look like this:
+{{< img src="/posts/Git-Actions-with-IIS/Gactions1.png" height="624" width="232" align="center" title="Gactions1" >}}
+
+5. You’ll be prompted to **“Enter the name of the runner group to add this runner to:”** We’re not using any special groups here, so press enter for default. 
+
+6. Next prompt is to **“Enter the name of runner”**. Press enter for default, which is the hostname. 
+
+7. Prompt after that will prompt you for runner labels. I like to add the hostname of the machine in my labels, but you don’t have to. If you’d like to go back later and add a label you can do so through the specific runners tab in Github. 
+
+8. Following the labels you’ll be asked to enter the name for the _work folder. Keep it as default
+{{< img src="/posts/Git-Actions-with-IIS/Gactions2.png" height="624" width="260" align="center" title="Gactions2" >}}
+
+9. You’ll then be asked if you’d like to run the runner as a service (Y/N). You can run it as the **NT AUTHORITY\NETWORK SERVICE** if you’d like to leave it as default, but I'm going to use a specific service account. In my case it's **“greatvaluelab.com\iisrunner”**. Make sure you include the domain or else the installer will get confused. After that, enter the password. 
+  * If you make a mistake on the username part you’ll need to completely uninstall the runner and try again. 
+
+10. Looks good! Lets check our services and GitHub's Runners page to make sure everything looks like it should. 
+{{< img src="/posts/Git-Actions-with-IIS/Gactions3.png" height="624" width="273" align="center" title="Gactions3" >}}
+{{< img src="/posts/Git-Actions-with-IIS/Gactions4.png" height="578" width="81" align="center" title="Gactions4" >}}
+{{< img src="/posts/Git-Actions-with-IIS/Gactions5.png" height="624" width="272" align="center" title="Gactions5" >}}
