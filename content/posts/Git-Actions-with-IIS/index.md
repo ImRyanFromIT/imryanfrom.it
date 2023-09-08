@@ -25,17 +25,18 @@ Simple website gets a simple design. There are three machines involved in making
 2. I want to keep the packages mentioned above segmented and off the web and file servers
 3. The ability to burn and recreate the web server on demand was an earlier goal of mine
 4. Web content and SSL certificates are much easier to manage when everything is centralized
+
 Eventually the web and build servers can be containerized for further efficiency gains, but I'm keeping it simple for now. 
+
 **Artist's Rendition**
 {{< img src="/posts/Git-Actions-with-IIS/GrandDesigns.png" height="150" width="400" align="center" title="Artist's Rendition" >}}
 
 ### Creating the Build Action
-Github Actions aren’t actually all that complicated if you don’t want them to be. We’ll be using the below action to ensure changes pushed to the master repository are automatically pushed to the IIS
+Github Actions aren’t actually all that complicated if you don’t want them to be. We’ll be using the below action to ensure changes pushed to the master repository are automatically pushed to the IIS. Make sure to change the paths to fit your usage. 
 
 {{< highlight yaml >}}
 # Name of the action
 name: Website Integrate and Deploy
-
 
 # Workflow triggers
 # either triggers on a push to the main branch, or via a button in Github(workflow dispatch field)
@@ -89,3 +90,31 @@ jobs:
           popd
         shell: cmd
 {{< /highlight >}}
+
+### Configuring GV-BUILD
+Our build server needs Hugo and Toha dependencies preinstalled in order for our actions script to work. We’ll use Chocolatey and a batch file to take care of this. Script is named IIS_BuildDependencies.bat [found here](https://github.com/ImRyanFromIT/PowerShell_Misc/tree/master/IIS). It installs
+1. Chocolatey
+2. Hugo
+3. GoLang
+4. Node JS
+5. Git
+{{< highlight bat >}}
+@echo off
+echo Installing Chocolatey
+powershell Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+:: Section 2: Package Installs
+echo ========================================================================
+echo Installing Hugo
+choco install hugo --confirm
+echo ========================================================================
+echo Installing Go
+choco install golang -y
+echo ========================================================================
+echo Installing NodeJs
+choco install nodejs -y
+echo ========================================================================
+choco install git.install -y
+{{< /highlight >}}
+
+### Installing the Runner Agent
+We’ll be installing a self-hosted runner on the build server as a service. Therefore, please ensure you’ve created a service account specifically for this process. I’m using a standard service account called IISRunner. 
