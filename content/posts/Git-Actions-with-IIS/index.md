@@ -134,6 +134,7 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem ; [System.IO.Compression
 {{< /highlight >}}
 
 3. Run the **configure** script in the Github page referenced above. It’ll include a specific token you’ll need. Looks like this:
+
 {{< highlight PowerShell >}}
 # Create the runner and start the configuration experience
 ./config.cmd --url https://github.com/ImRyanFromIT/imryanfrom.it --token 123456789ABCDEFGHIJKLMN
@@ -156,7 +157,11 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem ; [System.IO.Compression
 9. You’ll then be asked if you’d like to run the runner as a service (Y/N). You can run it as the **NT AUTHORITY\NETWORK SERVICE** if you’d like to leave it as default, but I'm going to use a specific service account. In my case it's **“greatvaluelab.com\iisrunner”**. Make sure you include the domain or else the installer will get confused. After that, enter the password. 
     * If you make a mistake on the username part you’ll need to completely uninstall the runner and try again. 
 
-10. Looks good! Lets check our services and GitHub's Runners page to make sure everything looks like it should. 
-{{< img src="/posts/Git-Actions-with-IIS/Gactions3.png" height="273" width="624" align="center" title="Gactions3" >}}
-{{< img src="/posts/Git-Actions-with-IIS/Gactions4.png" height="81" width="578" align="center" title="Gactions4" >}}
-{{< img src="/posts/Git-Actions-with-IIS/Gactions5.png" height="272" width="624" align="center" title="Gactions5" >}}
+10. Looks good! Lets check our services and GitHub's Runners page to make sure everything looks like it should.
+{{< img src="/posts/Git-Actions-with-IIS/Gactions3.png" height="273" width="624" align="left" title="Gactions3" >}}
+
+**Services**
+{{< img src="/posts/Git-Actions-with-IIS/Gactions4.png" height="81" width="578" align="left" title="Gactions4" >}}
+
+**Checking GitHub can see the runner**
+{{< img src="/posts/Git-Actions-with-IIS/Gactions5.png" height="272" width="624" align="left" title="Gactions5" >}}
