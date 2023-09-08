@@ -23,25 +23,24 @@ To create the website itself I was looking at the static site generators Hugo an
 
 ### Hugo Hosting
 #### Pre-Provision Requirements
-1. Windows AD-DS
-2. Create a Service Account. We need to create a service account in order to provide the web server access to files on the file server. I’m just using a standard service account, not a gMSA. 
+1. Windows domain
+2. Create a Service Account. We need it to create a service account in order to provide the web server access to files on the file server. I’m just using a standard service account, not a gMSA.
 3. Acquire a domain name from GoDaddy/Cloudflare/etc 
 4. Acquire SSL Certificate. There are ways to get one of these very cheap or straight up for free. I go into more detail on this in the ‘Security’ section. 
 5. Acquire a test site from Hugo/Jekyll/etc and drop it into your file server(or finish your own site before you start). Make sure it's in a share accessible by the service account you created earlier. **Important** - If you’re using Hugo, you need to ensure your site has a /public/ folder. This is the folder that we point IIS to. If it doesn’t, Hugo will create one with the command hugo server -w
 6. Port forward the IP address of the web server you’ll be exposing to the internet. **I highly recommend you get a reverse proxy service rather than expose your WAN address directly.** More details on this will again be found in the ‘Security’ section.
 
 #### Self hosting and IIS
-The three primary goals I have with IIS hosting are to keep everything simple, stable, and secure. Specifically:
+The primary goals I have with IIS hosting are to keep everything simple, stable, and secure. Specifically:
 1. I want to keep the website files off of the web server, and centralized on my file server. 
-2. I want to keep the building of the website(and the dependencies required) off of the web server.
-3. I want to manage the SSL certificate in one place. 
-4. I want the ability to burn and recreate the web server when necessary as easily as possible. 
+2. I want to manage the SSL certificate in one place. 
+3. I want the ability to burn and recreate the web server when necessary as easily as possible. 
 
 #### Provision Server
-I used PowerShell primarily deploy and configure IIS and the scripts used can be found here or below.[1]
+I used PowerShell primarily deploy and configure IIS. [The scripts used can be found here](https://github.com/ImRyanFromIT/PowerShell_Misc/tree/master/IIS) or below.
 
 1. Roles and Features
-    * As with any Windows server, you should only install the roles and feature you need. Below is what I consider the minimum when deploying IIS for the first time. 
+    * As with any Windows server, you should only install the roles and features you need. Below is what I consider the minimum when deploying IIS for the first time. 
 
 {{< highlight PowerShell >}}
 Install-WindowsFeature -Name Web-Server, Web-HTTP-Logging, Web-Log-Libraries, Web-Filtering, Web-CertProvider, Web-Http-Redirect -includemanagementtools
@@ -49,9 +48,10 @@ Install-WindowsFeature -Name Web-Server, Web-HTTP-Logging, Web-Log-Libraries, We
 Write-Host "Features have been installed" 
 {{< /highlight >}}
 
+
 2. App Pool Configuration
-    * IIS has a feature called an application pool. Each application pool houses applications or sites on IIS. They provide lots of features, but we’ll be using it primarily to provide the authentication necessary to access the website files on my file server, and to manage security. 
-    * Because I’m not working with multiple application pools in my environment, I’m just using the default pool to keep it simple. The script below prompts for credentials, and then configures the app pool to use those credentials instead of pass-through authentication. We’ll be using the service account that was setup earlier. 
+    * IIS has a feature called an application pool. Each application pool houses applications or sites on IIS. They provide lots of features, but we’ll be using it primarily to provide the authentication necessary to access the website files on the file server, and to manage security. 
+    * Because I’m not working with multiple application pools in my environment, I’m just using the default pool to keep it simple. The script below prompts for credentials, and then configures the app pool to use those credentials instead of pass-through authentication. The credentials to use are service account that was setup earlier. 
     * Variables to change are **$app_pool_name**
 
 {{< highlight PowerShell >}}
