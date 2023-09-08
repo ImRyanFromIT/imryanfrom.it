@@ -38,11 +38,13 @@ The three primary goals I have with IIS hosting are to keep everything simple, s
 4. I want the ability to burn and recreate the web server when necessary as easily as possible. 
 
 #### Provision Server
-I used PowerShell primarily deploy and configure IIS and the scripts used can be found here.[1]
+I used PowerShell primarily deploy and configure IIS and the scripts used can be found here or below.[1]
 
 1. Roles and Features
   * As with any Windows server, you should only install the roles and feature you need. Below is what I consider the minimum when deploying IIS for the first time. 
 
-{{< highlight html >}}
-    Install-WindowsFeature -Name Web-Server, Web-HTTP-Logging, Web-Log-Libraries, Web-Filtering, Web-CertProvider, Web-Http-Redirect -includemanagementtools
+{{< highlight PowerShell >}}
+Install-WindowsFeature -Name Web-Server, Web-HTTP-Logging, Web-Log-Libraries, Web-Filtering, Web-CertProvider, Web-Http-Redirect -includemanagementtools
+
+Write-Host "Features have been installed" 
 {{< /highlight >}}
