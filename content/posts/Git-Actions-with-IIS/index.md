@@ -26,5 +26,74 @@ Simple website gets a simple design. There are three machines involved in making
 3. The ability to burn and recreate the web server on demand was an earlier goal of mine
 4. Web content and SSL certificates are much easier to manage when everything is centralized
 Eventually the web and build servers can be containerized for further efficiency gains, but I'm keeping it simple for now. 
+**Artist's Rendition**
+{{< img src="/posts/Git-Actions-with-IIS/GrandDesigns.png" height="150" width="400" align="center" title="Artist's Rendition" >}}
 
-{{< img src="/posts/Git-Actions-with-IIS/GrandDesigns.png" height="200" width="400" align="center" title="Artist's Rendition" >}}
+### Creating the Build Action
+Github Actions aren’t actually all that complicated if you don’t want them to be. We’ll be using the below action to ensure changes pushed to the master repository are automatically pushed to the IIS
+
+{{< highlight yaml >}}
+# Name of the action
+name: Website Integrate and Deploy
+
+
+# Workflow triggers
+# either triggers on a push to the main branch, or via a button in Github(workflow dispatch field)
+on:
+    push:
+        branches:
+            - master
+    workflow_dispatch:
+
+
+# Jobs within the workflow. In this example there are 2. The pull job and the build job. It's important to note that jobs in Github actions run
+# concurrently, so in the 'build' job, we have the field 'needs: pull' to force it to wait for a success from the 'pull' job
+
+
+# The pull's job is to pull the updated repository from Github to the file server. We're using pushd and popd to circumvent network path issues.
+# pushd opens the network path, popd closes it.
+jobs:
+    pull:
+      runs-on: [GV-BUILD01]
+
+
+      steps:
+        - name: Pull repo
+          run: |
+            pushd \\gv-data01\Shares\WebShare\imryanfrom.it
+            git pull origin master
+            popd
+          shell: cmd
+
+
+# The build's job is to integrate the changes and build it in Hugo. It consists of three parts. The first is to update Hugo modules, the second is
+# install and update the node modules, and the third is to put everything together and build the website.
+    build:
+      runs-on: [GV-BUILD01]
+      needs: pull
+
+
+      steps:
+      - name: Update Hugo modules
+        run: |
+          pushd \\gv-data01\Shares\WebShare\imryanfrom.it
+          hugo mod tidy
+          popd
+        shell: cmd
+
+
+      - name: Install node modules
+        run: |
+          pushd \\gv-data01\Shares\WebShare\imryanfrom.it
+          hugo mod npm pack
+          npm install
+          popd
+        shell: cmd
+         
+      - name: Build the website
+        run: |
+          pushd \\gv-data01\Shares\WebShare\imryanfrom.it
+          hugo --minify
+          popd
+        shell: cmd
+{{< /highlight >}}
