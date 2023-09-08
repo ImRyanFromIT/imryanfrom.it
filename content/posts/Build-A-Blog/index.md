@@ -7,7 +7,7 @@ menu:
     name: Build-A-Blog
     identifier: BaB
     weight: 40
-hero: boat.jpg
+hero: IIS-Featured-Image.jpg
 draft: false
 ---
 ## What I did and why I did it, and how you can too
@@ -21,7 +21,7 @@ To create the website itself I was looking at the static site generators Hugo an
 
 ## How I did it
 
-### Hugo Website
+### Hugo Hosting
 #### Pre-Provision Requirements
 1. Windows AD-DS
 2. Create a Service Account. We need to create a service account in order to provide the web server access to files on the file server. I’m just using a standard service account, not a gMSA. 
