@@ -39,9 +39,6 @@ socialLinks:
 # You can put custom buttons to link your relevant resources.
 # For example, you can put link for your resume.
 resourceLinks:
-- title: "Resume"
-  url: "files/resume.pdf"
-
 - title: "LinkedIn"
   url: "https://www.linkedin.com/in/ryan-merkel-b02b1b188/"
 
